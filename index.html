@@ -1,0 +1,154 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tanapol Dangsakul (62011301)</title>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.slim.min.js"></script>
+    <!-- update the version number as needed -->
+    <script defer src="/__/firebase/6.3.4/firebase-app.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script defer src="/__/firebase/6.3.4/firebase-auth.js"></script>
+    <script defer src="/__/firebase/6.3.4/firebase-database.js"></script>
+	<script defer src="/__/firebase/6.3.4/firebase-firestore.js"></script>
+    <script defer src="/__/firebase/6.3.4/firebase-messaging.js"></script>
+    <script defer src="/__/firebase/6.3.4/firebase-storage.js"></script>
+    <!-- initialize the SDK after all desired features are loaded -->
+    <script defer src="/__/firebase/init.js"></script>
+	
+	<style>
+		.product-list{
+			border:grey solid 1px;
+			padding:20px;
+			margin:20px;
+		}
+		
+		.product-item{
+			display:inline-block;
+			border:#eee solid 5px;
+			padding:10px;
+			margin:5px;
+			min-height:160px;
+			width:200px;
+		}
+		
+		.product-item img{
+			max-height:150px;
+			max-width:180px;
+		}
+		
+		input{
+			margin-bottom:5px;
+		}
+	</style>
+
+
+	<script>
+		// Your web app's Firebase configuration
+		var firebaseConfig = {
+			apiKey: "AIzaSyCf_Rf4ZRCyDLBVMPGvVd1n_P9nVRsUT00",
+			authDomain: "fireapp-62011301.firebaseapp.com",
+			databaseURL: "https://fireapp-62011301.firebaseio.com",
+			projectId: "fireapp-62011301",
+			storageBucket: "fireapp-62011301.appspot.com",
+			messagingSenderId: "76964079789",
+			appId: "1:76964079789:web:5eed07ec1e5640bd17fe24"
+		};
+	  
+		firebase.initializeApp(firebaseConfig);
+	  
+		var db ;
+		  
+		function loadData(){
+			if (typeof(db) === 'undefined') {
+				db = firebase.firestore();
+			}
+			
+			var productdiv = "";
+			
+			db.collection("products").get().then(function(querySnapshot) {
+				querySnapshot.forEach(function(doc) {
+					console.log(doc.id, " => ", doc.data());
+					
+					productdiv += "<div class='product-item'>";
+					productdiv += 	"<img src='"+ doc.data().image+"'/>";
+					productdiv += 	"<h3>"+ 
+doc.data().name+"</h3>";
+					productdiv += 	"<div> Price: "+ doc.data().price+" THB</div>";
+					productdiv += 	"<div> Shop: "+ doc.data().shop+"</div>";
+					productdiv += "</div>";
+				});
+				
+				$("div#products").html(productdiv);
+			});
+			
+			
+		}
+		
+		
+		function addProduct(){
+			if (typeof(db) === 'undefined') {
+				db = firebase.firestore();
+			}
+			
+			if($("input#txtImage").val()!=""){
+			
+				db.collection("products").add({ 
+					name: $("input#txtPname").val(),
+					image: $("input#txtImage").val(),
+					price: $("input#txtPrice").val(),
+					shop: $("input#txtShop").val(),
+				});
+				
+				loadData();
+				
+				$("input#txtPname").val("");
+				$("input#txtImage").val("");
+				$("input#txtPrice").val("");
+				$("input#txtShop").val("");	
+				
+			}else{
+				alert("Please input data");
+			}
+			
+			
+
+		}
+		
+
+</script>
+  </head>
+  <body>
+	<h1>Tanapol Dangsakul (62011301)</h1>
+	
+	<h2>Products</h2>
+	<div id="products" class="product-list">
+		<div class="product-item">
+		<img src="https://user-images.githubusercontent.com/4838076/34308760-ec55df82-e735-11e7-843b-2e311fa7b7d0.gif" width="200px"/>
+		</div>
+		<br/>
+		<br/>
+		<strong><a href="#" onclick="loadData()">Click Here to Load Data</a></strong>
+	</div>
+
+	<hr/>
+	<h2>New Product</h2>
+	
+	<div class="product-list">
+		Name: <input type="text" id="txtPname"><br/>
+		Image: <input type="text" id="txtImage"><br/>
+		Price: <input type="text" id="txtPrice"><br/>
+		Shop: <input type="text" id="txtShop"><br/><br/>
+		<button  onclick="addProduct()">Add a Product</button>
+	</div>
+
+	<script>
+		//Waiting for firebase object
+		setTimeout(function() {
+			loadData();
+		}, 500);
+	</script>
+  </body>
+</html>
